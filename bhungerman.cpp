@@ -1,151 +1,31 @@
-// C++ program for Kruskal's algorithm to find Minimum
-// Spanning Tree of a given connected, undirected and
-// weighted graph
-#include <bits/stdc++.h>
+#include<iostream>
+#include<limits.h>
 using namespace std;
+int n=9;
 
-// Creating shortcut for an integer pair
-typedef pair<int, int> iPair;
+//Min Node will return the node having minimum weight
+int min_node(int matrix[9][9],bool visited[9]){
+    int result;
+    int min_value=INT_MAX;
 
-// Structure to represent a graph
-struct Graph
-{
-   int V, E;
-   vector<pair<int, iPair>> edges;
+    for(int i=0;i<n;i++){
+        if(visited[i]){
+            for(int j=0;j<n;j++){
+                if(matrix[i][j]<min_value && !visited[j]){//If the node is not in visited array then consider it,otherwise not,
+                                                            //to avoid the loop in the minimum spanning tree
+                    min_value=matrix[i][j];//update the min value
+                    result=i*10 + j;
+                }//endl inner if structure
+            }//end inner for loop
+        }//end outer if structure
+    }//end outer for loop
 
-   // Constructor
-   Graph(int V, int E)
-   {
-      this->V = V;
-      this->E = E;
-   }
-
-   // Utility function to add an edge
-   void addEdge(int u, int v, int w)
-   {
-      edges.push_back({w, {u, v}});
-   }
-
-   // Function to find MST using Kruskal's
-   // MST algorithm
-   int kruskalMST();
-};
-
-// To represent Disjoint Sets
-struct DisjointSets
-{
-   int *parent, *rnk;
-   int n;
-
-   // Constructor.
-   DisjointSets(int n)
-   {
-      // Allocate memory
-      this->n = n;
-      parent = new int[n + 1];
-      rnk = new int[n + 1];
-
-      // Initially, all vertices are in
-      // different sets and have rank 0.
-      for (int i = 0; i <= n; i++)
-      {
-         rnk[i] = 0;
-
-         //every element is parent of itself
-         parent[i] = i;
-      }
-   }
-
-   // Find the parent of a node 'u'
-   // Path Compression
-   int find(int u)
-   {
-      /* Make the parent of the nodes in the path 
-		from u--> parent[u] point to parent[u] */
-      if (u != parent[u])
-         parent[u] = find(parent[u]);
-      return parent[u];
-   }
-
-   // Union by rank
-   void merge(int x, int y)
-   {
-      x = find(x), y = find(y);
-
-      /* Make tree with smaller height 
-		a subtree of the other tree */
-      if (rnk[x] > rnk[y])
-         parent[y] = x;
-      else // If rnk[x] <= rnk[y]
-         parent[x] = y;
-
-      if (rnk[x] == rnk[y])
-         rnk[y]++;
-   }
-};
-
-/* Functions returns weight of the MST*/
-
-int Graph::kruskalMST()
-{
-   int mst_wt = 0; // Initialize result
-
-   // Sort edges in increasing order on basis of cost
-   sort(edges.begin(), edges.end());
-
-   // Create disjoint sets
-   DisjointSets ds(V);
-
-   // Iterate through all sorted edges
-   vector<pair<int, iPair>>::iterator it;
-   for (it = edges.begin(); it != edges.end(); it++)
-   {
-      int u = it->second.first;
-      int v = it->second.second;
-
-      int set_u = ds.find(u);
-      int set_v = ds.find(v);
-
-      // Check if the selected edge is creating
-      // a cycle or not (Cycle is created if u
-      // and v belong to same set)
-      if (set_u != set_v)
-      {
-         // Current edge will be in the MST
-         // so print it
-         cout << u << " - " << v << endl;
-
-         // Update MST weight
-         mst_wt += it->first;
-
-         // Merge two sets
-         ds.merge(set_u, set_v);
-      }
-   }
-
-   return mst_wt;
+    return result;
 }
 
-// Driver program to test above functions
-int main()
-{
-   /* Let us create above shown weighted 
-	and unidrected graph */
-   int V = 9, E = 14;
-   Graph g(V, E);
-
-   // making above shown graph
-   /*
-   A = 0
-   B = 1
-   C = 2
-   D = 3
-   E = 4
-   F = 5
-   G = 6
-   H = 7
-   I = 8
-   */
+int main(){
+cout<<"Hello world\n";
+/*
 
    g.addEdge(0, 2, 9);
    g.addEdge(0, 4, 8);
@@ -170,12 +50,58 @@ int main()
 
    g.addEdge(6, 7, 1);
    g.addEdge(6, 8, 3);
+*/
 
+int matrix[9][9]={//  0  1  2  3  4  5  6  7  8
+               /*0*/{ 0, 0, 9, 0, 8, 7, 0, 9, 0},
+               /*1*/{ 0, 0, 7, 2, 6, 0, 0, 0, 3},
+               /*2*/{ 9, 7, 0, 0, 7, 3, 0, 0, 0},
+               /*3*/{ 0, 2, 0, 0, 6, 0, 3, 4, 2},
+               /*4*/{ 8, 6, 7, 6, 0, 9, 0, 4, 0},
+               /*5*/{ 7, 0, 3, 0, 9, 0, 0, 0, 0},
+               /*6*/{ 0, 0, 0, 3, 0, 0, 0, 1, 3},
+               /*7*/{ 9, 0, 0, 4, 4, 0, 1, 0, 0},
+               /*8*/{ 0, 3, 0, 2, 0, 0, 3, 0, 0},
+                };
 
-   cout << "Edges of MST are \n";
-   int mst_wt = g.kruskalMST();
+//Display the matrix
+for(int i=0;i<n;i++){
+    for(int j=0;j<n;j++)
+        cout<<matrix[i][j]<<"\t";
+     cout<<"\n";
+}
 
-   cout << "\nWeight of MST is " << mst_wt;
+//Make the disconnected node weight = MAX
+for(int i=0;i<n;i++){
+    for(int j=0;j<n;j++){
+        if(matrix[i][j]==0)
+            matrix[i][j]=INT_MAX;
+    }
+}
 
-   return 0;
+//Take an visited array
+bool visited[9];
+//Make all the entries of visited array false
+for(int i=0;i<9;i++)
+    visited[i]=false;
+
+int source;
+cout<<"Enter the source vertex\n";
+cin>>source;
+
+visited[source]=true;
+
+//Tree having 'n' vertices will have 'n-1' edges in the minimum spanning tree
+int t=8;
+while(t>0){
+    int result=min_node(matrix,visited);
+    int i=result/10;
+    int j=result%10;
+    visited[j]=true;//Now add the new node the visited, to consider the its edeges in the condition
+    cout<<"Path "<<i<<"- "<<j<<" ="<<matrix[i][j]<<endl;
+
+t--;
+}
+
+return 0;
 }
